@@ -6,5 +6,7 @@
 
 bool is_numeric(const char *str);
 bool is_pow_of_two(int a);
+bool validate_numeric_args(char *argv[]);
+bool validate_textual_args(char *argv[]);
 
 #endif
