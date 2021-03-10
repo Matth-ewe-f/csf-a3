@@ -4,7 +4,7 @@
 #ifndef CACHE_SIM
 #define CACHE_SIM
 
-bool is_numeric(char *str);
+bool is_numeric(const char *str);
 bool is_pow_of_two(int a);
 
 #endif

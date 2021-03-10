@@ -4,6 +4,8 @@
 #include <iostream>
 #include <string>
 
+#include "main.h"
+
 using std::cerr;
 using std::cout;
 using std::endl;
@@ -99,7 +101,7 @@ int main(int argc, char *argv[]) {
 
     // sixth argument - lru or fifo
     string evic(argv[6]);
-    if (evic != "lru" && write_loc != "fifo") {
+    if (evic != "lru" && evic != "fifo") {
         cerr << "Invalid argument #6" << endl;
         return 1;
     }
