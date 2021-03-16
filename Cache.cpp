@@ -21,7 +21,13 @@ Cache::Cache (int numSets, int numBlocksInSet, int numBytesInBlock, bool writeAl
 
   // TODO: initialize the map data structure for cache
   
-  cout << "initialized cache" << endl;
+  cout << "initialized cache with:" << endl;
+  cout << "\t" << numSets << " sets\n"
+       << "\t" << numBlocksInSet << " blocks per set\n"
+       << "\t" << numBytesInBlock << " bytes in block\n"
+       << "\t" << (writeAllocate ? "write-allocate" : "no-write-allocate") << "\n"
+       << "\t" << (writeThrough ? "write-through" : "write-back") << "\n"
+       << "\t" << (lru == true ? "lru" : "fifo") << " sets\n" << endl;
 }
 
 void Cache::performLoad() {
