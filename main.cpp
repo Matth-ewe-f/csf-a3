@@ -161,14 +161,18 @@ int main(int argc, char *argv[]) {
         // perform either load or store action
         if (action == 'l') {
             cache.performLoad(address);
-        } else {
+        } else if (action == 's') {
             cache.performStore(address);
+        } else {
+            cerr << "instruction not load or store" << endl;
+            return 1;
         }
-        
         
         // set action to 'a' to check later if cin read empty line
         action = 'a';
     }
+
+    cache.printResults();
 
     return 0;
 }

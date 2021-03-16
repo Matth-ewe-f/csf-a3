@@ -7,7 +7,7 @@ class Cache {
   // map to simulate cache
     std::map<int, int> data;
   // tracking variables for performance reporting
-    int loans;
+    int loads;
     int stores;
     int loadHits;
     int loadMisses;
@@ -26,6 +26,7 @@ class Cache {
     Cache(int numSets, int numBlocksInSet, int numBytesInBlock, bool writeAllocate, bool writeThrough, bool lru);
     void performLoad(int address);
     void performStore(int address);
+    void printResults();
 };
 
 #endif
