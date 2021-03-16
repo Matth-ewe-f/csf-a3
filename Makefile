@@ -4,10 +4,13 @@
 CFLAGS = -std=c++11 -Wall -Wextra --pedantic
 
 csim : main.o
-	g++ -o $@ main.o
+	g++ -o $@ main.o Cache.o
 
 main.o : main.cpp main.h
 	g++ $(CFLAGS) -c main.cpp
+
+Cache.o : Cache.cpp Cache.h
+	g++ $(CFLAGS) -c Cache.cpp
 
 clean :
 	rm -f *.o csim

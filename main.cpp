@@ -5,6 +5,7 @@
 #include <string>
 
 #include "main.h"
+#include "Cache.h"
 
 using std::cerr;
 using std::cout;
@@ -120,6 +121,8 @@ int main(int argc, char *argv[]) {
     if (!validate_textual_args(argv + 4)) {
         return 1;
     }
+
+    Cache cache (1, 1, 1, true, true, true);
 
     return 0;
 }
