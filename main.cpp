@@ -122,7 +122,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    Cache cache (1, 1, 1, true, true, true);
+    Cache cache (argv[0], argv[1], argv[2], true, true, true);
 
     return 0;
 }
