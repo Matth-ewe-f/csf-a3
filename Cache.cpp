@@ -27,13 +27,13 @@ Cache::Cache (int numSets, int numBlocksInSet, int numBytesInBlock, bool writeAl
        << "\t" << numBytesInBlock << " bytes in block\n"
        << "\t" << (writeAllocate ? "write-allocate" : "no-write-allocate") << "\n"
        << "\t" << (writeThrough ? "write-through" : "write-back") << "\n"
-       << "\t" << (lru == true ? "lru" : "fifo") << " sets\n" << endl;
+       << "\t" << (lru == true ? "lru" : "fifo") << endl;
 }
 
-void Cache::performLoad() {
-  
+void Cache::performLoad(int address) {
+  // cout << "performing load" << endl;
 }
 
-void Cache::performStore() {
-  
+void Cache::performStore(int address) {
+  // cout << "performing store" << endl;
 }
