@@ -9,14 +9,14 @@ class CacheBlock {
         int counter;
     
     public:
-        
+
         bool isInCache();
-        void setInCache(bool val);
         bool isDirty();
-        void setDirty(bool val);
         int getCounter();
+        void loadIntoCache();
+        void evict();
+        void markAsDirty();
         void incrementCounter();
-        void resetCounter();
 
 };
 

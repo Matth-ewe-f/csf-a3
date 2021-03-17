@@ -1,38 +1,38 @@
 #include "CacheBlock.h"
 
 /*
- * Simple getters and setters for 'inCache' and 'dirty' fields
+ * Getters for fields
  */
 bool CacheBlock::isInCache() {
-    return isInCache;
-}
-
-void CacheBlock::setInCache(bool val) {
-    inCache = val;
+    return inCache;
 }
 
 bool CacheBlock::isDirty() {
     return dirty;
 }
 
-void CacheBlock::setDirty(bool val) {
-    dirty = val;
+int CacheBlock::getCounter() {
+    return counter;
 }
 
 /*
- * Getter and setters for 'counter' (used in determining which block to
- * evict). Setters are limited to the type of operations that are meant to
- * be performed on the field
+ * Cache block management operations
  */
-int CacheBlock::getCounter() {
-    return counter;
+void CacheBlock::loadIntoCache() {
+    inCache = true;
+    dirty = false;
+    counter = 0;
+}
+
+void CacheBlock::evict() {
+    inCache = false;
+    dirty = false;
+}
+
+void CacheBlock::markAsDirty() {
+    dirty = true;
 }
 
 void CacheBlock::incrementCounter() {
     counter++;
 }
-
-void CacheBlock::resetCounter() {
-    counter = 0;
-}
-
