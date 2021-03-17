@@ -1,11 +1,13 @@
 #include <iostream>
 #include <map>
+#include <vector>
 #include "Cache.h"
 #include "CacheBlock.h"
 
 using std::cout;
 using std::endl;
 using std::map;
+using std::vector;
 
 Cache::Cache (int numSets, int numBlocksInSet, int numBytesInBlock, bool writeAllocate, bool writeThrough, bool lru) {
   // initialize counters
@@ -26,7 +28,7 @@ Cache::Cache (int numSets, int numBlocksInSet, int numBytesInBlock, bool writeAl
   this->lru = lru;
   
   // initialize map used to keep track of cache blocks
-  blocks = new map<int, CacheBlock*>;
+  blocks = new map<int, vector<CacheBlock>>;
 
   // print initialization settings
   cout << "initialized cache with:" << endl;
@@ -39,11 +41,6 @@ Cache::Cache (int numSets, int numBlocksInSet, int numBytesInBlock, bool writeAl
 }
 
 Cache::~Cache() {
-  for (map<int, CacheBlock*>::iterator it = blocks->begin();
-      it != blocks->end();
-      it++) {
-    delete it->second;
-  }
   delete blocks;
 }
 

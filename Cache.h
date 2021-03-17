@@ -1,12 +1,13 @@
 #ifndef CACHE_H
 #define CACHE_H
 
+#include <vector>
 #include <map>
 #include "CacheBlock.h"
 
 class Cache {
   // map to simulate cache
-    std::map<int, CacheBlock*> *blocks;
+    std::map<int, std::vector<CacheBlock>> *blocks;
   // tracking variables for performance reporting
     int loads;
     int stores;
