@@ -96,9 +96,12 @@ void Cache::performLoad(int address) {
     int index = getAddressIndex(address);
     int tag = getAddressTag(address);
 
-    // search the cache for the requested block
-    vector<CacheBlock> set = sets->at(index);
-    for (vector<CacheBlock>::iterator it = set.begin();
+    // use try block to catch out_of_range error
+    vector<CacheBlock> set;
+    try {
+        // search the cache for the requested block
+        vector<CacheBlock> set = sets->at(index);
+        for (vector<CacheBlock>::iterator it = set.begin();
             it != set.end();
             it++) {
         if (tag == it->getTag()) {
@@ -106,8 +109,12 @@ void Cache::performLoad(int address) {
             loadHits++;
             loadHit(set, it->getCounter());
             return;
+            }
         }
+    } catch (const std::out_of_range& e) {
+        // out_of_range error when at(index) DNE
     }
+    
     // a miss has occurred
     loadMisses++;
     loadMiss(set, tag);
@@ -119,16 +126,23 @@ void Cache::performStore(int address) {
     int index = getAddressIndex(address);
     int tag = getAddressTag(address);
 
-    // search the cache for the requested block
-    vector<CacheBlock> set = sets->at(index);
-    for (vector<CacheBlock>::iterator it = set.begin();
+    // use try block to catch out_of_range error
+    vector<CacheBlock> set;
+    try {
+        // search the cache for the requested block
+        vector<CacheBlock> set = sets->at(index);
+        for (vector<CacheBlock>::iterator it = set.begin();
             it != set.end();
             it++) {
         if (tag == it->getTag()) {
             storeHits++;
             // TODO cache hit has occured
+            }
         }
+    } catch (const std::out_of_range& e) {
+        // out_of_range error when at(index) DNE
     }
+
     storeMisses++;
     // TODO cache miss has occured
 }
