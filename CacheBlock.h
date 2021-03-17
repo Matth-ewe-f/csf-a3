@@ -19,6 +19,7 @@ class CacheBlock {
         void evict();
         void markAsDirty();
         void incrementCounter();
+        void resetCounter();
 
 };
 

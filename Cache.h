@@ -27,6 +27,7 @@ class Cache {
         // functions
         int getAddressIndex(int fullAddress);
         int getAddressTag(int fullAddress);
+        void loadHit(std::vector<CacheBlock>, int counter);
 
     public:
         Cache(int numSets, int numBlocksInSet, int numBytesInBlock, bool writeAllocate, bool writeThrough, bool lru);

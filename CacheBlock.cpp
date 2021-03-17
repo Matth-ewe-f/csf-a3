@@ -50,3 +50,7 @@ void CacheBlock::markAsDirty() {
 void CacheBlock::incrementCounter() {
     counter++;
 }
+
+void CacheBlock::resetCounter() {
+    counter = 0;
+}

@@ -54,6 +54,18 @@ int Cache::getAddressTag(int fullAddress) {
     return (fullAddress >> (numBytesInBlock * 8)) / numSets;
 }
 
+void Cache::loadHit(vector<CacheBlock> set, int counter) {
+    for (vector<CacheBlock>::iterator it = set.begin();
+            it != set.end();
+            it++) {
+        if (it->getCounter() < counter) {
+            it->incrementCounter();
+        } else if (it->getCounter() == counter) {
+            it->resetCounter();
+        }
+    }
+}
+
 void Cache::performLoad(int address) {
     loads++;
     // get relevant pieces of address
@@ -66,12 +78,19 @@ void Cache::performLoad(int address) {
             it != set.end();
             it++) {
         if (tag == it->getTag()) {
+            // a hit has occurred
             loadHits++;
-            return;
+            loadHit(set, it->getCounter());
         }
     }
+
+    // a miss has occurred
     loadMisses++;
-    // TODO cache miss has occured
+    // if there's an empty slot in the set, just add the block
+    if (set.size() < numBlocksInSet) {
+        CacheBlock newBlock = CacheBlock(tag, true);
+        set.push_back(newBlock);
+    }
 }
 
 void Cache::performStore(int address) {
