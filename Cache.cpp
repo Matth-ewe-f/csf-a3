@@ -2,7 +2,6 @@
 #include <map>
 #include <vector>
 #include "Cache.h"
-#include "CacheBlock.h"
 
 using std::cout;
 using std::endl;
