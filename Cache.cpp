@@ -1,8 +1,11 @@
-#include "Cache.h"
 #include <iostream>
+#include <map>
+#include "Cache.h"
+#include "CacheBlock.h"
 
 using std::cout;
 using std::endl;
+using std::map;
 
 Cache::Cache (int numSets, int numBlocksInSet, int numBytesInBlock, bool writeAllocate, bool writeThrough, bool lru) {
   // initialize counters
@@ -13,6 +16,7 @@ Cache::Cache (int numSets, int numBlocksInSet, int numBytesInBlock, bool writeAl
   this->storeHits = 0;
   this->storeMisses = 0;
   this->cycles = 0;
+
   // initialize Cache configurations
   this->numSets = numSets;
   this->numBlocksInSet = numBlocksInSet;
@@ -20,10 +24,11 @@ Cache::Cache (int numSets, int numBlocksInSet, int numBytesInBlock, bool writeAl
   this->writeAllocate = writeAllocate;
   this->writeThrough = writeThrough;
   this->lru = lru;
-
-  // TODO: initialize the map data structure for cache
   
+  // initialize map used to keep track of cache blocks
+  blocks = new map<int, CacheBlock*>;
 
+  // print initialization settings
   cout << "initialized cache with:" << endl;
   cout << "\t" << numSets << " sets\n"
        << "\t" << numBlocksInSet << " blocks per set\n"
@@ -33,7 +38,14 @@ Cache::Cache (int numSets, int numBlocksInSet, int numBytesInBlock, bool writeAl
        << "\t" << (lru == true ? "lru" : "fifo") << endl;
 }
 
-// TODO Cache Destructor
+Cache::~Cache() {
+  for (map<int, CacheBlock*>::iterator it = blocks->begin();
+      it != blocks->end();
+      it++) {
+    delete it->second;
+  }
+  delete blocks;
+}
 
 void Cache::performLoad(int address) {
   // TODO: handle load opeartions with the pre-determined cache settings
