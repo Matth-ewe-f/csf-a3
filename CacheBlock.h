@@ -9,7 +9,7 @@ class CacheBlock {
         int counter;
     
     public:
-
+        CacheBlock(bool initializeInCache);
         bool isInCache();
         bool isDirty();
         int getCounter();

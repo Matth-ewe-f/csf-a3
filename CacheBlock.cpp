@@ -1,6 +1,15 @@
 #include "CacheBlock.h"
 
 /*
+ * CacheBlock Constructor
+ */
+CacheBlock::CacheBlock(bool initializeInCache) {
+    inCache = initializeInCache;
+    dirty = false;
+    counter = 0;
+}
+
+/*
  * Getters for fields
  */
 bool CacheBlock::isInCache() {
