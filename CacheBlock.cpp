@@ -3,7 +3,8 @@
 /*
  * CacheBlock Constructor
  */
-CacheBlock::CacheBlock(bool initializeInCache) {
+CacheBlock::CacheBlock(int addressTag, bool initializeInCache) {
+    tag = addressTag;
     inCache = initializeInCache;
     dirty = false;
     counter = 0;
@@ -12,6 +13,10 @@ CacheBlock::CacheBlock(bool initializeInCache) {
 /*
  * Getters for fields
  */
+int CacheBlock::getTag() {
+    return tag;
+}
+
 bool CacheBlock::isInCache() {
     return inCache;
 }

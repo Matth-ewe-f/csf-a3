@@ -4,12 +4,14 @@
 class CacheBlock {
 
     private:
+        int tag;
         bool inCache;
         bool dirty;
         int counter;
     
     public:
-        CacheBlock(bool initializeInCache);
+        CacheBlock(int addressTag, bool initializeInCache);
+        int getTag();
         bool isInCache();
         bool isDirty();
         int getCounter();
