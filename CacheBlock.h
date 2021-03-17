@@ -10,13 +10,10 @@ class CacheBlock {
         int counter;
     
     public:
-        CacheBlock(int addressTag, bool initializeInCache);
+        CacheBlock(int addressTag);
         int getTag();
-        bool isInCache();
         bool isDirty();
         int getCounter();
-        void loadIntoCache();
-        void evict();
         void markAsDirty();
         void incrementCounter();
         void resetCounter();

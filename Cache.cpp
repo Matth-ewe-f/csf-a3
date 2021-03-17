@@ -55,6 +55,7 @@ int Cache::getAddressTag(int fullAddress) {
 }
 
 void Cache::loadHit(vector<CacheBlock> set, int counter) {
+    // Assume LRU for MS2, so handle that case only
     for (vector<CacheBlock>::iterator it = set.begin();
             it != set.end();
             it++) {
@@ -64,6 +65,30 @@ void Cache::loadHit(vector<CacheBlock> set, int counter) {
             it->resetCounter();
         }
     }
+}
+
+void Cache::loadMiss(vector<CacheBlock> set, int tag) {
+    // increment all of the counters
+    for (vector<CacheBlock>::iterator it = set.begin();
+            it != set.end();
+            it++) {
+        it->incrementCounter();
+    }
+    // if the set is full, evict one block
+    if (set.size() >= numBlocksInSet) {
+        // find the block to evict
+        for (vector<CacheBlock>::iterator it = set.begin();
+                it != set.end();
+                it++) {
+            if (it->getCounter() == numBlocksInSet) {
+                set.erase(it);
+                break;
+            }
+        }
+    }
+    // add the new block to the cache
+    CacheBlock newBlock = CacheBlock(tag);
+    set.push_back(newBlock);
 }
 
 void Cache::performLoad(int address) {
@@ -81,16 +106,12 @@ void Cache::performLoad(int address) {
             // a hit has occurred
             loadHits++;
             loadHit(set, it->getCounter());
+            return;
         }
     }
-
     // a miss has occurred
     loadMisses++;
-    // if there's an empty slot in the set, just add the block
-    if (set.size() < numBlocksInSet) {
-        CacheBlock newBlock = CacheBlock(tag, true);
-        set.push_back(newBlock);
-    }
+    loadMiss(set, tag);
 }
 
 void Cache::performStore(int address) {

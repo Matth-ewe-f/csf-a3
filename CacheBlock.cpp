@@ -3,9 +3,8 @@
 /*
  * CacheBlock Constructor
  */
-CacheBlock::CacheBlock(int addressTag, bool initializeInCache) {
+CacheBlock::CacheBlock(int addressTag) {
     tag = addressTag;
-    inCache = initializeInCache;
     dirty = false;
     counter = 0;
 }
@@ -15,10 +14,6 @@ CacheBlock::CacheBlock(int addressTag, bool initializeInCache) {
  */
 int CacheBlock::getTag() {
     return tag;
-}
-
-bool CacheBlock::isInCache() {
-    return inCache;
 }
 
 bool CacheBlock::isDirty() {
@@ -32,17 +27,6 @@ int CacheBlock::getCounter() {
 /*
  * Cache block management operations
  */
-void CacheBlock::loadIntoCache() {
-    inCache = true;
-    dirty = false;
-    counter = 0;
-}
-
-void CacheBlock::evict() {
-    inCache = false;
-    dirty = false;
-}
-
 void CacheBlock::markAsDirty() {
     dirty = true;
 }
