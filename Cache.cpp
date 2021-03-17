@@ -28,7 +28,7 @@ Cache::Cache (int numSets, int numBlocksInSet, int numBytesInBlock, bool writeAl
   this->lru = lru;
   
   // initialize map used to keep track of cache blocks
-  blocks = new map<int, vector<CacheBlock>>;
+  sets = new map<int, vector<CacheBlock>>;
 
   // print initialization settings
   cout << "initialized cache with:" << endl;
@@ -41,15 +41,51 @@ Cache::Cache (int numSets, int numBlocksInSet, int numBytesInBlock, bool writeAl
 }
 
 Cache::~Cache() {
-  delete blocks;
+  delete sets;
+}
+
+int Cache::getAddressIndex(int fullAddress) {
+  // bit shifting discards offset, mod discards tag
+  return (fullAddress >> (numBytesInBlock * 8)) % numSets;
+}
+
+int Cache::getAddressTag(int fullAddress) {
+  // bit shifting discards offset, division discards index
+  return (fullAddress >> (numBytesInBlock * 8)) / numSets;
 }
 
 void Cache::performLoad(int address) {
-  // TODO: handle load opeartions with the pre-determined cache settings
+  // get relevant pieces of address
+  int index = getAddressIndex(address);
+  int tag = getAddressTag(address);
+
+  // search the cache for the requested block
+  vector<CacheBlock> set = sets->at(index);
+  for (vector<CacheBlock>::iterator it = set.begin();
+      it != set.end();
+      it++) {
+    if (tag == it->getTag()) {
+      // TODO cache hit has occured
+    }
+  }
+  // TODO cache miss has occured
 }
 
 void Cache::performStore(int address) {
-  // TODO: handle store opeartions with the pre-determined cache settings
+  // get relevant pieces of address
+  int index = getAddressIndex(address);
+  int tag = getAddressTag(address);
+
+  // search the cache for the requested block
+  vector<CacheBlock> set = sets->at(index);
+  for (vector<CacheBlock>::iterator it = set.begin();
+      it != set.end();
+      it++) {
+    if (tag == it->getTag()) {
+      // TODO cache hit has occured
+    }
+  }
+  // TODO cache miss has occured
 }
 
 void Cache::printResults() {

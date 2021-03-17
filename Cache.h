@@ -6,9 +6,10 @@
 #include "CacheBlock.h"
 
 class Cache {
-  // map to simulate cache
-    std::map<int, std::vector<CacheBlock>> *blocks;
-  // tracking variables for performance reporting
+  private:
+    // map to simulate cache
+    std::map<int, std::vector<CacheBlock>> *sets;
+    // tracking variables for performance reporting
     int loads;
     int stores;
     int loadHits;
@@ -16,13 +17,16 @@ class Cache {
     int storeHits;
     int storeMisses;
     int cycles;
-  // variables for cache settings
+    // variables for cache settings
     int numSets;
     int numBlocksInSet;
     int numBytesInBlock;
     bool writeAllocate;
     bool writeThrough;
     bool lru;
+    // functions
+    int getAddressIndex(int fullAddress);
+    int getAddressTag(int fullAddress);
 
   public:
     Cache(int numSets, int numBlocksInSet, int numBytesInBlock, bool writeAllocate, bool writeThrough, bool lru);
