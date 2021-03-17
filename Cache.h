@@ -32,6 +32,7 @@ class Cache {
 
     public:
         Cache(int numSets, int numBlocksInSet, int numBytesInBlock, bool writeAllocate, bool writeThrough, bool lru);
+        ~Cache();
         void performLoad(int address);
         void performStore(int address);
         void printResults();
