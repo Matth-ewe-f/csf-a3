@@ -33,6 +33,8 @@ Cache::Cache (int numSets, int numBlocksInSet, int numBytesInBlock, bool writeAl
        << "\t" << (lru == true ? "lru" : "fifo") << endl;
 }
 
+// TODO Cache Destructor
+
 void Cache::performLoad(int address) {
   // TODO: handle load opeartions with the pre-determined cache settings
 }

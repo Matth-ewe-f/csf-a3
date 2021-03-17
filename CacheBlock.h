@@ -9,6 +9,7 @@ class CacheBlock {
         int counter;
     
     public:
+        
         bool isInCache();
         void setInCache(bool val);
         bool isDirty();
