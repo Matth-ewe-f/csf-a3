@@ -1,11 +1,11 @@
 # Matthew Flynn and Andrew Suh
 # CSF Assignment #3
 
-CFLAGS = -std=c++11 -Wall -Wextra --pedantic
+CFLAGS = -std=c++11 -Wall -Wextra --pedantic -g
 CPP_SRCS = main.cpp Cache.cpp CacheBlock.cpp
 
 csim : main.o Cache.o CacheBlock.o
-	g++ -o $@ main.o Cache.o CacheBlock.o
+	g++ -g -o $@ main.o Cache.o CacheBlock.o
 
 main.o : main.cpp main.h
 	g++ $(CFLAGS) -c main.cpp

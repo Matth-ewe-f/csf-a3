@@ -8,7 +8,7 @@
 class Cache {
     private:
         // map to simulate cache
-        std::map<int, std::vector<CacheBlock>> *sets;
+        std::map<int, std::vector<CacheBlock* >* > *sets;
         // tracking variables for performance reporting
         int loads;
         int stores;
@@ -27,10 +27,11 @@ class Cache {
         // functions
         int getAddressIndex(int fullAddress);
         int getAddressTag(int fullAddress);
-        void loadHit(std::vector<CacheBlock>, int counter);
-        void loadMiss(std::vector<CacheBlock>, int tag);
+        void loadHit(std::vector<CacheBlock* >*, int counter);
+        void loadMissSetExists(std::vector<CacheBlock* >*, int tag);
+        void loadMissSetNotExists(int index, int tag);
         void storeHit(CacheBlock* block);
-        void storeMiss(std::vector<CacheBlock>, int tag);
+        void storeMiss(std::vector<CacheBlock* >*, int tag);
         void writeToCache();
         void writeToMem();
         void writeToCacheAndMem();

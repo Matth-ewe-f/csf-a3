@@ -27,13 +27,24 @@ Cache::Cache (int numSets, int numBlocksInSet, int numBytesInBlock, bool writeAl
     this->lru = lru;
     
     // initialize map used to keep track of cache blocks
-    sets = new map<int, vector<CacheBlock>>;
+    sets = new map<int, vector<CacheBlock* >* >;
 
     // print initialization settings
     printInitResults();
 }
 
 Cache::~Cache() {
+    for (map<int, vector<CacheBlock* >* >::iterator it = sets->begin();
+            it != sets->end();
+            it++) {
+        vector<CacheBlock *> * set = it->second;
+        for (vector<CacheBlock*>::iterator jt = set->begin();
+                jt != set->end();
+                jt++) {
+            delete jt.base();
+        }
+        delete set;
+    }
     delete sets;
 }
 
@@ -47,41 +58,49 @@ int Cache::getAddressTag(int fullAddress) {
     return (fullAddress >> (numBytesInBlock * 8)) / numSets;
 }
 
-void Cache::loadHit(vector<CacheBlock> set, int counter) {
+void Cache::loadHit(vector<CacheBlock* > * set, int counter) {
     // Assume LRU for MS2, so handle that case only
-    for (vector<CacheBlock>::iterator it = set.begin();
-            it != set.end();
+    for (vector<CacheBlock* >::iterator it = set->begin();
+            it != set->end();
             it++) {
-        if (it->getCounter() < counter) {
-            it->incrementCounter();
-        } else if (it->getCounter() == counter) {
-            it->resetCounter();
+        if ((*it)->getCounter() < counter) {
+            (*it)->incrementCounter();
+        } else if ((*it)->getCounter() == counter) {
+            (*it)->resetCounter();
         }
     }
 }
 
-void Cache::loadMiss(vector<CacheBlock> set, int tag) {
+void Cache::loadMissSetExists(vector<CacheBlock* > * set, int tag) {
     // increment all of the counters
-    for (vector<CacheBlock>::iterator it = set.begin();
-            it != set.end();
+    for (vector<CacheBlock* >::iterator it = set->begin();
+            it != set->end();
             it++) {
-        it->incrementCounter();
+        (*it)->incrementCounter();
     }
     // if the set is full, evict one block
-    if (set.size() >= numBlocksInSet) {
+    if (set->size() >= numBlocksInSet) {
         // find the block to evict
-        for (vector<CacheBlock>::iterator it = set.begin();
-                it != set.end();
+        for (vector<CacheBlock *>::iterator it = set->begin();
+                it != set->end();
                 it++) {
-            if (it->getCounter() == numBlocksInSet) {
-                set.erase(it);
+            if ((*it)->getCounter() == numBlocksInSet) {
+                set->erase(it);
                 break;
             }
         }
     }
     // add the new block to the cache
-    CacheBlock newBlock = CacheBlock(tag);
-    set.push_back(newBlock);
+    CacheBlock * newBlock = new CacheBlock(tag);
+    set->push_back(newBlock);
+}
+
+void Cache::loadMissSetNotExists(int index, int tag) {
+    // the set must be created
+    vector<CacheBlock* > * set = new vector<CacheBlock *>;
+    CacheBlock * block = new CacheBlock(tag);
+    set->push_back(block);
+    sets->insert({index, set});
 }
 
 void Cache::performLoad(int address) {
@@ -90,28 +109,28 @@ void Cache::performLoad(int address) {
     int index = getAddressIndex(address);
     int tag = getAddressTag(address);
 
-    // use try block to catch out_of_range error
-    vector<CacheBlock> set;
-    try {
-        // search the cache for the requested block
-        vector<CacheBlock> set = sets->at(index);
-        for (vector<CacheBlock>::iterator it = set.begin();
-            it != set.end();
+    vector<CacheBlock *> * set;
+    // search the cache for the requested block
+    if (sets->find(index) != sets->end()) {
+        set = sets->at(index);
+        for (vector<CacheBlock *>::iterator it = set->begin();
+            it != set->end();
             it++) {
-            if (tag == it->getTag()) {
+            if (tag == (*it)->getTag()) {
                 // a hit has occurred
                 loadHits++;
-                loadHit(set, it->getCounter());
+                loadHit(set, (*it)->getCounter());
                 return;
-                }
+            }
         }
-    } catch (const std::out_of_range& e) {
-        // out_of_range error when at(index) DNE
+        // if this point is reached, cache miss
+        loadMisses++;
+        loadMissSetExists(set, tag);
+    } else {
+        // a miss has occurred
+        loadMisses++;
+        loadMissSetNotExists(index, tag);
     }
-    
-    // a miss has occurred
-    loadMisses++;
-    loadMiss(set, tag);
 }
 
 void Cache::performStore(int address) {
@@ -121,17 +140,17 @@ void Cache::performStore(int address) {
     int tag = getAddressTag(address);
 
     // use try block to catch out_of_range error
-    vector<CacheBlock> set;
+    vector<CacheBlock* > * set;
     try {
         // search the cache for the requested block
-        vector<CacheBlock> set = sets->at(index);
-        for (vector<CacheBlock>::iterator it = set.begin();
-            it != set.end();
+        set = sets->at(index);
+        for (vector<CacheBlock *>::iterator it = set->begin();
+            it != set->end();
             it++) {
-            if (tag == it->getTag()) {
+            if (tag == (*it)->getTag()) {
                 storeHits++;
-                storeHit(it->getThis());
-                }
+                storeHit((*it)->getThis());
+            }
         }
     } catch (const std::out_of_range& e) {
         // out_of_range error when at(index) DNE
@@ -151,7 +170,7 @@ void Cache::storeHit(CacheBlock* block) {
     }
 }
 
-void Cache::storeMiss(std::vector<CacheBlock>, int tag) {
+void Cache::storeMiss(std::vector<CacheBlock* > * set, int tag) {
     // write-through
     if (writeThrough) {
         // write-allocate
