@@ -24,6 +24,10 @@ int CacheBlock::getCounter() {
     return counter;
 }
 
+CacheBlock* CacheBlock::getThis() {
+    return this;
+}
+
 /*
  * Cache block management operations
  */

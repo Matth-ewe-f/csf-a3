@@ -30,13 +30,7 @@ Cache::Cache (int numSets, int numBlocksInSet, int numBytesInBlock, bool writeAl
     sets = new map<int, vector<CacheBlock>>;
 
     // print initialization settings
-    cout << "initialized cache with:" << endl;
-    cout << "\t" << numSets << " sets\n"
-             << "\t" << numBlocksInSet << " blocks per set\n"
-             << "\t" << numBytesInBlock << " bytes in block\n"
-             << "\t" << (writeAllocate ? "write-allocate" : "no-write-allocate") << "\n"
-             << "\t" << (writeThrough ? "write-through" : "write-back") << "\n"
-             << "\t" << (lru == true ? "lru" : "fifo") << endl;
+    printInitResults();
 }
 
 Cache::~Cache() {
@@ -104,12 +98,12 @@ void Cache::performLoad(int address) {
         for (vector<CacheBlock>::iterator it = set.begin();
             it != set.end();
             it++) {
-        if (tag == it->getTag()) {
-            // a hit has occurred
-            loadHits++;
-            loadHit(set, it->getCounter());
-            return;
-            }
+            if (tag == it->getTag()) {
+                // a hit has occurred
+                loadHits++;
+                loadHit(set, it->getCounter());
+                return;
+                }
         }
     } catch (const std::out_of_range& e) {
         // out_of_range error when at(index) DNE
@@ -134,17 +128,58 @@ void Cache::performStore(int address) {
         for (vector<CacheBlock>::iterator it = set.begin();
             it != set.end();
             it++) {
-        if (tag == it->getTag()) {
-            storeHits++;
-            // TODO cache hit has occured
-            }
+            if (tag == it->getTag()) {
+                storeHits++;
+                storeHit(it->getThis());
+                }
         }
     } catch (const std::out_of_range& e) {
         // out_of_range error when at(index) DNE
     }
 
     storeMisses++;
-    // TODO cache miss has occured
+    storeMiss(set, tag);
+}
+
+void Cache::storeHit(CacheBlock* block) {
+    if (writeThrough) {
+        writeToCacheAndMem();
+    } else {
+        writeToCache();
+        // mark block dirty
+        block->markAsDirty();
+    }
+}
+
+void Cache::storeMiss(std::vector<CacheBlock>, int tag) {
+    // write-through
+    if (writeThrough) {
+        // write-allocate
+        if (writeAllocate) {
+            // bring mem block to cache
+            writeToCacheAndMem();
+        }
+        // write to both cache and mem
+        writeToCacheAndMem();
+        
+
+    } else { // write-back
+        writeToCache();
+        // mark block dirty
+        // block->markAsDirty();
+    }
+}
+
+void Cache::writeToCache() {
+    cycles += 1;
+}
+
+void Cache::writeToMem() {
+    cycles += 100 * (numBytesInBlock / 4);
+}
+
+void Cache::writeToCacheAndMem() {
+    cycles += 100 * (numBytesInBlock / 4) + 1;
 }
 
 void Cache::printResults() {
@@ -155,4 +190,14 @@ void Cache::printResults() {
              << "\nStore hits: " << storeHits
              << "\nStore misses: " << storeMisses
              << "\nTotal cycles: " << cycles << endl;
+}
+
+void Cache::printInitResults() {
+    cout << "initialized cache with:" << endl;
+    cout << "\t" << numSets << " sets\n"
+             << "\t" << numBlocksInSet << " blocks per set\n"
+             << "\t" << numBytesInBlock << " bytes in block\n"
+             << "\t" << (writeAllocate ? "write-allocate" : "no-write-allocate") << "\n"
+             << "\t" << (writeThrough ? "write-through" : "write-back") << "\n"
+             << "\t" << (lru == true ? "lru" : "fifo") << endl;
 }

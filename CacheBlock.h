@@ -17,6 +17,7 @@ class CacheBlock {
         void markAsDirty();
         void incrementCounter();
         void resetCounter();
+        CacheBlock* getThis();
 
 };
 

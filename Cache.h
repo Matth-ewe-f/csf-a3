@@ -29,6 +29,11 @@ class Cache {
         int getAddressTag(int fullAddress);
         void loadHit(std::vector<CacheBlock>, int counter);
         void loadMiss(std::vector<CacheBlock>, int tag);
+        void storeHit(CacheBlock* block);
+        void storeMiss(std::vector<CacheBlock>, int tag);
+        void writeToCache();
+        void writeToMem();
+        void writeToCacheAndMem();
 
     public:
         Cache(int numSets, int numBlocksInSet, int numBytesInBlock, bool writeAllocate, bool writeThrough, bool lru);
@@ -36,6 +41,7 @@ class Cache {
         void performLoad(int address);
         void performStore(int address);
         void printResults();
+        void printInitResults();
 };
 
 #endif
