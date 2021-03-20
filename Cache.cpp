@@ -41,7 +41,7 @@ Cache::~Cache() {
         for (vector<CacheBlock*>::iterator jt = set->begin();
                 jt != set->end();
                 jt++) {
-            delete jt.base();
+            delete *jt;
         }
         delete set;
     }
