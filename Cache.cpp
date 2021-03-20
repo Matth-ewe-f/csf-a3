@@ -88,12 +88,12 @@ void Cache::loadMissSetExists(vector<CacheBlock* > * set, int tag) {
         (*it)->incrementCounter();
     }
     // if the set is full, evict one block
-    if (set->size() == numBlocksInSet - 1) {
+    if (set->size() == numBlocksInSet) {
         // find the block to evict
         for (vector<CacheBlock *>::iterator it = set->begin();
                 it != set->end();
                 it++) {
-            if ((*it)->getCounter() == numBlocksInSet - 1) {
+            if ((*it)->getCounter() == numBlocksInSet) {
                 set->erase(it);
                 break;
             }
@@ -150,11 +150,11 @@ void Cache::storeMissSetExists(vector<CacheBlock *> * set, int tag) {
         (*it)->incrementCounter();
     }
     // if an eviction must occur, perform it
-    if (set->size() == numBlocksInSet - 1) {
+    if (set->size() == numBlocksInSet) {
         for (vector<CacheBlock *>::iterator it = set->begin();
                 it != set->end();
                 it++) {
-            if ((*it)->getCounter() == numBlocksInSet - 1) {
+            if ((*it)->getCounter() == numBlocksInSet) {
                 if (!writeThrough && (*it)->isDirty()) {
                     writeToMem();
                 }
