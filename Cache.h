@@ -25,6 +25,7 @@ class Cache {
         bool writeThrough;
         bool lru;
         // functions
+        int logBaseTwo(int input);
         int getAddressIndex(int fullAddress);
         int getAddressTag(int fullAddress);
         void loadHit(std::vector<CacheBlock *>* set, unsigned counter);
@@ -33,12 +34,11 @@ class Cache {
         void storeHit(std::vector<CacheBlock *>* set, unsigned counter);
         void storeMissSetExists(std::vector<CacheBlock* >* set, int tag);
         void storeMissSetNotExists(int index, int tag);
-        void storeMiss(std::vector<CacheBlock *>* set, int tag);
         void writeToCache();
         void writeToMem();
 
     public:
-        Cache(int numSets, int numBlocksInSet, int numBytesInBlock, bool writeAllocate, bool writeThrough, bool lru);
+        Cache(unsigned numSets, unsigned numBlocksInSet, unsigned numBytesInBlock, bool writeAllocate, bool writeThrough, bool lru);
         ~Cache();
         void performLoad(int address);
         void performStore(int address);

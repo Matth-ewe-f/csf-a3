@@ -150,7 +150,7 @@ int main(int argc, char *argv[]) {
     long address;
     int third;
 
-    long unsigned index = 1; // just for testing
+    unsigned long index = 1;
     // loop that continues with every line in given trace
     while (cin) {
         cin >> action >> std::hex >> address >> third;
@@ -172,7 +172,6 @@ int main(int argc, char *argv[]) {
         
         // set action to 'a' to check later if cin read empty line
         action = 'a';
-        //cout << index << endl;
         index++;
     }
 

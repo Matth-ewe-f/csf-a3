@@ -8,7 +8,7 @@ using std::endl;
 using std::map;
 using std::vector;
 
-Cache::Cache (int numSets, int numBlocksInSet, int numBytesInBlock, bool writeAllocate, bool writeThrough, bool lru) {
+Cache::Cache (unsigned numSets, unsigned numBlocksInSet, unsigned numBytesInBlock, bool writeAllocate, bool writeThrough, bool lru) {
     // initialize counters
     this->loads = 0;
     this->stores = 0;
@@ -48,14 +48,23 @@ Cache::~Cache() {
     delete sets;
 }
 
+int Cache::logBaseTwo(int input) {
+    int index = 0;
+    while (input > 1) {
+        index++;
+        input /= 2;
+    }
+    return index;
+}
+
 int Cache::getAddressIndex(int fullAddress) {
     // bit shifting discards offset, mod discards tag
-    return (fullAddress >> (numBytesInBlock * 8)) % numSets;
+    return (fullAddress >> logBaseTwo(numBytesInBlock)) % numSets;
 }
 
 int Cache::getAddressTag(int fullAddress) {
     // bit shifting discards offset, division discards index
-    return (fullAddress >> (numBytesInBlock * 8)) / numSets;
+    return (fullAddress >> logBaseTwo(numBytesInBlock)) / numSets;
 }
 
 void Cache::loadHit(vector<CacheBlock* > * set, unsigned counter) {
@@ -79,12 +88,12 @@ void Cache::loadMissSetExists(vector<CacheBlock* > * set, int tag) {
         (*it)->incrementCounter();
     }
     // if the set is full, evict one block
-    if (set->size() >= numBlocksInSet) {
+    if (set->size() == numBlocksInSet - 1) {
         // find the block to evict
         for (vector<CacheBlock *>::iterator it = set->begin();
                 it != set->end();
                 it++) {
-            if ((*it)->getCounter() == numBlocksInSet) {
+            if ((*it)->getCounter() == numBlocksInSet - 1) {
                 set->erase(it);
                 break;
             }
@@ -141,15 +150,17 @@ void Cache::storeMissSetExists(vector<CacheBlock *> * set, int tag) {
         (*it)->incrementCounter();
     }
     // if an eviction must occur, perform it
-    for (vector<CacheBlock *>::iterator it = set->begin();
-            it != set->end();
-            it++) {
-        if ((*it)->getCounter() == numBlocksInSet) {
-            if (!writeThrough && (*it)->isDirty()) {
-                writeToMem();
+    if (set->size() == numBlocksInSet - 1) {
+        for (vector<CacheBlock *>::iterator it = set->begin();
+                it != set->end();
+                it++) {
+            if ((*it)->getCounter() == numBlocksInSet - 1) {
+                if (!writeThrough && (*it)->isDirty()) {
+                    writeToMem();
+                }
+                it = set->erase(it);
+                break;
             }
-            it = set->erase(it);
-            break;
         }
     }
     // add the new block
@@ -174,6 +185,26 @@ void Cache::storeMissSetNotExists(int index, int tag) {
     }
     set->push_back(block);
     sets->insert({index, set});
+}
+
+void Cache::storeHit(vector<CacheBlock *> * set, unsigned counter) {
+    // only consider LRU case for MS2, so update counters for LRU case
+    for (vector<CacheBlock *>::iterator it = set->begin();
+            it != set->end();
+            it++) {
+        if ((*it)->getCounter() < counter) {
+            (*it)->incrementCounter();
+        } else if ((*it)->getCounter() == counter) {
+            (*it)->resetCounter();
+            if (!writeThrough) {
+                (*it)->markAsDirty();
+            }
+        }
+    }
+    writeToCache();
+    if (writeThrough) {
+        writeToMem();
+    }
 }
 
 void Cache::performStore(int address) {
@@ -204,48 +235,6 @@ void Cache::performStore(int address) {
         storeMissSetNotExists(index, tag);
     }
 }
-
-void Cache::storeHit(vector<CacheBlock *> * set, unsigned counter) {
-    // only consider LRU case for MS2, so update counters for LRU case
-    for (vector<CacheBlock *>::iterator it = set->begin();
-            it != set->end();
-            it++) {
-        if ((*it)->getCounter() < counter) {
-            (*it)->incrementCounter();
-        } else if ((*it)->getCounter() == counter) {
-            (*it)->resetCounter();
-            if (!writeThrough) {
-                (*it)->markAsDirty();
-            }
-        }
-    }
-    writeToCache();
-    if (writeThrough) {
-        writeToMem();
-    }
-}
-
-/*
-void Cache::storeMiss(std::vector<CacheBlock* > * set, int tag) {
-    // write-through
-    if (writeThrough) {
-        // write-allocate
-        if (writeAllocate) {
-            // bring mem block to cache
-            writeToCache();
-            writeToMem();
-        }
-        // write to both cache and mem
-        writeToCache();
-        writeToMem();
-        
-
-    } else { // write-back
-        writeToCache();
-        // mark block dirty
-        // block->markAsDirty();
-    }
-}*/
 
 void Cache::writeToCache() {
     cycles += 1;
