@@ -38,6 +38,7 @@ class Cache {
         void readFromMem();
         void writeToCache();
         void writeToMem();
+        void writeToMemFourBytes();
 
     public:
         Cache(unsigned numSets, unsigned numBlocksInSet, unsigned numBytesInBlock, bool writeAllocate, bool writeThrough, bool lru);

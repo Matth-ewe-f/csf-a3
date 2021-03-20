@@ -150,7 +150,7 @@ void Cache::performLoad(int address) {
 void Cache::storeMissSetExists(vector<CacheBlock *> * set, int tag) {
     // if no-write-allocate, just write to mem and that's it
     if (!writeAllocate) {
-        writeToMem();
+        writeToMemFourBytes();
         return;
     }
     // increment all counters to make room for new block with counter = 0
@@ -188,7 +188,7 @@ void Cache::storeMissSetExists(vector<CacheBlock *> * set, int tag) {
 void Cache::storeMissSetNotExists(int index, int tag) {
     // if no-write-allocate, simply write to mem and that's it
     if (!writeAllocate) {
-        writeToMem();
+        writeToMemFourBytes();
         return;
     }
     vector<CacheBlock *> * set = new vector<CacheBlock *>;
@@ -267,6 +267,10 @@ void Cache::writeToCache() {
 
 void Cache::writeToMem() {
     cycles += 100 * (numBytesInBlock / 4);
+}
+
+void Cache::writeToMemFourBytes() {
+    cycles += 100;
 }
 
 void Cache::printResults() {
