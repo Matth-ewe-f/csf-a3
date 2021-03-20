@@ -181,7 +181,7 @@ void Cache::storeMissSetExists(vector<CacheBlock *> * set, int tag) {
     readFromMem();
     writeToCache();
     if (writeThrough) {
-        writeToMem();
+        writeToMemFourBytes();
     } else {
         block->markAsDirty();
     }
@@ -198,7 +198,7 @@ void Cache::storeMissSetNotExists(int index, int tag) {
     readFromMem();
     writeToCache();
     if (writeThrough) {
-        writeToMem();
+        writeToMemFourBytes();
     } else {
         block->markAsDirty();
     }
@@ -222,7 +222,7 @@ void Cache::storeHit(vector<CacheBlock *> * set, unsigned counter) {
     }
     writeToCache();
     if (writeThrough) {
-        writeToMem();
+        writeToMemFourBytes();
     }
 }
 
