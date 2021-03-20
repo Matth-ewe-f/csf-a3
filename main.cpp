@@ -148,8 +148,9 @@ int main(int argc, char *argv[]) {
     // variables to pass onto cache
     char action;
     long address;
-    char third;
+    int third;
 
+    long unsigned index = 1; // just for testing
     // loop that continues with every line in given trace
     while (cin) {
         cin >> action >> std::hex >> address >> third;
@@ -164,12 +165,14 @@ int main(int argc, char *argv[]) {
         } else if (action == 's') {
             cache.performStore(address);
         } else {
-            cerr << "instruction not load or store" << endl;
+            cerr << "instruction on line " << index 
+                    << " not load or store: " << action << endl;
             return 1;
         }
         
         // set action to 'a' to check later if cin read empty line
         action = 'a';
+        index++;
     }
 
     cache.printResults();
