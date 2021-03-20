@@ -7,7 +7,7 @@ class CacheBlock {
         int tag;
         bool inCache;
         bool dirty;
-        int counter;
+        unsigned counter;
     
     public:
         CacheBlock(int addressTag);
