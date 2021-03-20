@@ -99,6 +99,7 @@ void Cache::loadMissSetExists(vector<CacheBlock* > * set, int tag) {
                 break;
             }
         }
+        writeToCache();
     }
     // add the new block to the cache
     CacheBlock * newBlock = new CacheBlock(tag);
@@ -172,6 +173,7 @@ void Cache::storeMissSetExists(vector<CacheBlock *> * set, int tag) {
                 break;
             }
         }
+        writeToCache();
     }
     // add the new block
     CacheBlock * block = new CacheBlock(tag);
