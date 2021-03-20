@@ -27,10 +27,10 @@ class Cache {
         // functions
         int getAddressIndex(int fullAddress);
         int getAddressTag(int fullAddress);
-        void loadHit(std::vector<CacheBlock *>* set, int counter);
+        void loadHit(std::vector<CacheBlock *>* set, unsigned counter);
         void loadMissSetExists(std::vector<CacheBlock* >* set, int tag);
         void loadMissSetNotExists(int index, int tag);
-        void storeHit(std::vector<CacheBlock *>* set, int counter);
+        void storeHit(std::vector<CacheBlock *>* set, unsigned counter);
         void storeMissSetExists(std::vector<CacheBlock* >* set, int tag);
         void storeMissSetNotExists(int index, int tag);
         void storeMiss(std::vector<CacheBlock *>* set, int tag);

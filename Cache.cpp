@@ -58,7 +58,7 @@ int Cache::getAddressTag(int fullAddress) {
     return (fullAddress >> (numBytesInBlock * 8)) / numSets;
 }
 
-void Cache::loadHit(vector<CacheBlock* > * set, int counter) {
+void Cache::loadHit(vector<CacheBlock* > * set, unsigned counter) {
     // Assume LRU for MS2, so handle that case only
     for (vector<CacheBlock* >::iterator it = set->begin();
             it != set->end();
@@ -139,9 +139,17 @@ void Cache::storeMissSetExists(vector<CacheBlock *> * set, int tag) {
             it != set->end();
             it++) {
         (*it)->incrementCounter();
-        // if an eviction must occur, perform it
+    }
+    // if an eviction must occur, perform it
+    for (vector<CacheBlock *>::iterator it = set->begin();
+            it != set->end();
+            it++) {
         if ((*it)->getCounter() == numBlocksInSet) {
-            set->erase(it);
+            if (!writeThrough && (*it)->isDirty()) {
+                writeToMem();
+            }
+            it = set->erase(it);
+            break;
         }
     }
     // add the new block
@@ -153,6 +161,19 @@ void Cache::storeMissSetExists(vector<CacheBlock *> * set, int tag) {
     } else {
         block->markAsDirty();
     }
+}
+
+void Cache::storeMissSetNotExists(int index, int tag) {
+    vector<CacheBlock *> * set = new vector<CacheBlock *>;
+    CacheBlock * block = new CacheBlock(tag);
+    writeToCache();
+    if (writeThrough) {
+        writeToMem();
+    } else {
+        block->markAsDirty();
+    }
+    set->push_back(block);
+    sets->insert({index, set});
 }
 
 void Cache::performStore(int address) {
@@ -179,14 +200,12 @@ void Cache::performStore(int address) {
         storeMisses++;
         storeMissSetExists(set, tag);
     } else {
-
+        storeMisses++;
+        storeMissSetNotExists(index, tag);
     }
-
-    storeMisses++;
-    storeMiss(set, tag);
 }
 
-void Cache::storeHit(vector<CacheBlock *> * set, int counter) {
+void Cache::storeHit(vector<CacheBlock *> * set, unsigned counter) {
     // only consider LRU case for MS2, so update counters for LRU case
     for (vector<CacheBlock *>::iterator it = set->begin();
             it != set->end();
@@ -206,6 +225,7 @@ void Cache::storeHit(vector<CacheBlock *> * set, int counter) {
     }
 }
 
+/*
 void Cache::storeMiss(std::vector<CacheBlock* > * set, int tag) {
     // write-through
     if (writeThrough) {
@@ -225,7 +245,7 @@ void Cache::storeMiss(std::vector<CacheBlock* > * set, int tag) {
         // mark block dirty
         // block->markAsDirty();
     }
-}
+}*/
 
 void Cache::writeToCache() {
     cycles += 1;

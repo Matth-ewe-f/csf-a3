@@ -20,7 +20,7 @@ bool CacheBlock::isDirty() {
     return dirty;
 }
 
-int CacheBlock::getCounter() {
+unsigned CacheBlock::getCounter() {
     return counter;
 }
 

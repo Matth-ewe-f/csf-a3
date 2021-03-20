@@ -13,7 +13,7 @@ class CacheBlock {
         CacheBlock(int addressTag);
         int getTag();
         bool isDirty();
-        int getCounter();
+        unsigned getCounter();
         void markAsDirty();
         void incrementCounter();
         void resetCounter();

@@ -172,6 +172,7 @@ int main(int argc, char *argv[]) {
         
         // set action to 'a' to check later if cin read empty line
         action = 'a';
+        //cout << index << endl;
         index++;
     }
 
