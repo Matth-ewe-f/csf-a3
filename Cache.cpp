@@ -78,6 +78,7 @@ void Cache::loadHit(vector<CacheBlock* > * set, unsigned counter) {
             (*it)->resetCounter();
         }
     }
+    readFromCache();
 }
 
 void Cache::loadMissSetExists(vector<CacheBlock* > * set, int tag) {
@@ -101,6 +102,8 @@ void Cache::loadMissSetExists(vector<CacheBlock* > * set, int tag) {
     }
     // add the new block to the cache
     CacheBlock * newBlock = new CacheBlock(tag);
+    readFromMem();
+    readFromCache();
     set->push_back(newBlock);
 }
 
@@ -108,6 +111,8 @@ void Cache::loadMissSetNotExists(int index, int tag) {
     // the set must be created
     vector<CacheBlock* > * set = new vector<CacheBlock *>;
     CacheBlock * block = new CacheBlock(tag);
+    readFromMem();
+    readFromCache();
     set->push_back(block);
     sets->insert({index, set});
 }
@@ -171,6 +176,7 @@ void Cache::storeMissSetExists(vector<CacheBlock *> * set, int tag) {
     // add the new block
     CacheBlock * block = new CacheBlock(tag);
     set->push_back(block);
+    readFromMem();
     writeToCache();
     if (writeThrough) {
         writeToMem();
@@ -187,6 +193,7 @@ void Cache::storeMissSetNotExists(int index, int tag) {
     }
     vector<CacheBlock *> * set = new vector<CacheBlock *>;
     CacheBlock * block = new CacheBlock(tag);
+    readFromMem();
     writeToCache();
     if (writeThrough) {
         writeToMem();
@@ -244,6 +251,14 @@ void Cache::performStore(int address) {
         storeMisses++;
         storeMissSetNotExists(index, tag);
     }
+}
+
+void Cache::readFromCache() {
+    cycles += 1;
+}
+
+void Cache::readFromMem() {
+    cycles += 100 * (numBytesInBlock / 4);
 }
 
 void Cache::writeToCache() {

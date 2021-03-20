@@ -34,6 +34,8 @@ class Cache {
         void storeHit(std::vector<CacheBlock *>* set, unsigned counter);
         void storeMissSetExists(std::vector<CacheBlock* >* set, int tag);
         void storeMissSetNotExists(int index, int tag);
+        void readFromCache();
+        void readFromMem();
         void writeToCache();
         void writeToMem();
 
