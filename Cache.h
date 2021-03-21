@@ -37,7 +37,7 @@ class Cache {
         void readFromCache();
         void readFromMem();
         void writeToCache();
-        void writeToMem();
+        void writeBlockToMem();
         void writeToMemFourBytes();
 
     public:

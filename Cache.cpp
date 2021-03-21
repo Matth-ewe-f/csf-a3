@@ -95,6 +95,10 @@ void Cache::loadMissSetExists(vector<CacheBlock* > * set, int tag) {
                 it != set->end();
                 it++) {
             if ((*it)->getCounter() == numBlocksInSet) {
+                if (!writeThrough && (*it)->isDirty()) {
+                    writeBlockToMem();
+                }
+                delete *it;
                 set->erase(it);
                 break;
             }
@@ -167,22 +171,22 @@ void Cache::storeMissSetExists(vector<CacheBlock *> * set, int tag) {
                 it++) {
             if ((*it)->getCounter() == numBlocksInSet) {
                 if (!writeThrough && (*it)->isDirty()) {
-                    writeToMem();
+                    writeBlockToMem();
                 }
+                delete *it;
                 it = set->erase(it);
                 break;
             }
         }
-        writeToCache();
     }
     // add the new block
     CacheBlock * block = new CacheBlock(tag);
     set->push_back(block);
     readFromMem();
-    writeToCache();
     if (writeThrough) {
         writeToMemFourBytes();
     } else {
+        writeToCache();
         block->markAsDirty();
     }
 }
@@ -196,10 +200,10 @@ void Cache::storeMissSetNotExists(int index, int tag) {
     vector<CacheBlock *> * set = new vector<CacheBlock *>;
     CacheBlock * block = new CacheBlock(tag);
     readFromMem();
-    writeToCache();
     if (writeThrough) {
         writeToMemFourBytes();
     } else {
+        writeToCache();
         block->markAsDirty();
     }
     set->push_back(block);
@@ -267,7 +271,7 @@ void Cache::writeToCache() {
     cycles += 1;
 }
 
-void Cache::writeToMem() {
+void Cache::writeBlockToMem() {
     cycles += 100 * (numBytesInBlock / 4);
 }
 
