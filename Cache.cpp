@@ -69,15 +69,18 @@ int Cache::getAddressTag(int fullAddress) {
 
 void Cache::loadHit(vector<CacheBlock* > * set, unsigned counter) {
     // Assume LRU for MS2, so handle that case only
-    for (vector<CacheBlock* >::iterator it = set->begin();
+    if (lru) {
+        for (vector<CacheBlock* >::iterator it = set->begin();
             it != set->end();
             it++) {
-        if ((*it)->getCounter() < counter) {
-            (*it)->incrementCounter();
-        } else if ((*it)->getCounter() == counter) {
-            (*it)->resetCounter();
+            if ((*it)->getCounter() < counter) {
+                (*it)->incrementCounter();
+            } else if ((*it)->getCounter() == counter) {
+                (*it)->resetCounter();
+            }
         }
     }
+    
     readFromCache();
 }
 
@@ -212,15 +215,17 @@ void Cache::storeMissSetNotExists(int index, int tag) {
 
 void Cache::storeHit(vector<CacheBlock *> * set, unsigned counter) {
     // only consider LRU case for MS2, so update counters for LRU case
-    for (vector<CacheBlock *>::iterator it = set->begin();
+    if (lru) {
+        for (vector<CacheBlock *>::iterator it = set->begin();
             it != set->end();
             it++) {
-        if ((*it)->getCounter() < counter) {
-            (*it)->incrementCounter();
-        } else if ((*it)->getCounter() == counter) {
-            (*it)->resetCounter();
-            if (!writeThrough) {
-                (*it)->markAsDirty();
+            if ((*it)->getCounter() < counter) {
+                (*it)->incrementCounter();
+            } else if ((*it)->getCounter() == counter) {
+                (*it)->resetCounter();
+                if (!writeThrough) {
+                    (*it)->markAsDirty();
+                }
             }
         }
     }
