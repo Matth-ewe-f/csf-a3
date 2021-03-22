@@ -294,6 +294,16 @@ void Cache::printResults() {
              << "\nTotal cycles: " << cycles << endl;
 }
 
+void Cache::printResultsNoText() {
+    cout << loads 
+        << "\n" << stores 
+        << "\n" << loadHits 
+        << "\n" << loadMisses 
+        << "\n"  << storeHits 
+        << "\n"  << storeMisses 
+        << "\n"  << cycles << endl;
+}
+
 void Cache::printInitResults() {
     cout << "initialized cache with:" << endl;
     cout << "\t" << numSets << " sets\n"

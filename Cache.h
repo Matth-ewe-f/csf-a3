@@ -47,6 +47,7 @@ class Cache {
         void performStore(int address);
         void printResults();
         void printInitResults();
+        void printResultsNoText();
 };
 
 #endif
