@@ -66,5 +66,20 @@ To determine the best cache configuration, we conducted a series of tests for ea
 
 <br/>
 
-## BEST CONFIGURATION
-With the research above, we conclude that the best cache configuration is a combination of write-allocate, write-back, lru, with a good balance of associativity (8 sets / 512 blocks).
+**BEST CONFIGURATION**: With the research above, we conclude that the best cache configuration is a combination of write-allocate, write-back, lru, with a good balance of associativity (8 sets / 512 blocks).
+
+## Contributions
+
+Matthew's Contributions
+* command line argument validation
+* address decomposing
+* load, loadMiss, loadHit execution
+* store, storeMiss, storeHit execution
+* CacheBlock class implementation
+
+Andrew's Contributions
+* basic program control flow
+* reading trace files
+* Cache class structure
+* cycle count
+* printing results
