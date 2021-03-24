@@ -73,13 +73,15 @@ To determine the best cache configuration, we conducted a series of tests for ea
 Matthew's Contributions
 * command line argument validation
 * address decomposing
-* load, loadMiss, loadHit execution
-* store, storeMiss, storeHit execution
+* load, loadMiss, loadHit execution for lru
+* parts of store, storeMiss, storeHit execution for lru
 * CacheBlock class implementation
 
 Andrew's Contributions
 * basic program control flow
 * reading trace files
 * Cache class structure
+* parts of store, storeMiss, storeHit execution for lru
 * cycle count
+* load and store hit and miss excecution for fifo
 * printing results
