@@ -5,7 +5,13 @@
 #include "CacheBlock.h"
 
 /*
- * CacheBlock Constructor
+ * Constructs a new CacheBlock object
+ * 
+ * Parameters:
+ *   addressTag - the tag of the block being stored in this object
+ * 
+ * Returns:
+ *   The newly created object
  */
 CacheBlock::CacheBlock(int addressTag) {
     tag = addressTag;
@@ -14,35 +20,43 @@ CacheBlock::CacheBlock(int addressTag) {
 }
 
 /*
- * Getters for fields
+ * Returns the tag of the block being stored in this object
  */
 int CacheBlock::getTag() {
     return tag;
 }
 
+/*
+ * Returns whether or not this block has been written to since it was loaded
+ */
 bool CacheBlock::isDirty() {
     return dirty;
 }
 
+/*
+ * Returns the fifo/lru counter for this block
+ */
 unsigned CacheBlock::getCounter() {
     return counter;
 }
 
-CacheBlock* CacheBlock::getThis() {
-    return this;
-}
-
 /*
- * Cache block management operations
+ * Marks this block as dirty: it's been written to since it was loaded
  */
 void CacheBlock::markAsDirty() {
     dirty = true;
 }
 
+/*
+ * Increments this blocks fifo/lru counter
+ */
 void CacheBlock::incrementCounter() {
     counter++;
 }
 
+/*
+ * Sets this block's fifo/lru counter to zero
+ */
 void CacheBlock::resetCounter() {
     counter = 0;
 }
