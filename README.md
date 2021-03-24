@@ -49,3 +49,22 @@ To determine the best cache configuration, we conducted a series of tests for ea
 ---
 
 <br/>
+
+
+**Cache Configuration**: Lasatly, to figure out the best cache configuration, we conducted a series of tests with different cache set configurations, while maintaining the overall cache size. They all ran with 64 byte blocks, write-allocate, write-back, and lru eviction policy. As the data shows, as the number of sets go down and number of blocks go up, the hit rate and the total cycles decreases, signaling higher perforamnce. We can think of this as a result of higher associativity, which correlates to a higher hit rate, and hence better performance. However, we know that higher associativity doesn't come without drawbacks. Higher associativity also leads to a higher delay during cycles. Therefore the best place to be is with the highst associativity as possible, but before the point of significant diminishing returns due to hardware delay. 
+
+
+|  | 1 set / 4096 blocks | 8 sets / 512 blocks | 64 sets / 64 blocks | 512 sets / 8 blocks | 4096 sets / 1 block |
+|-|-|-|-|-|-|
+| total loads | 318197 | 318197 | 318197 | 318197 | 318197 |
+| total stores | 197486 | 197486 | 197486 | 197486 | 197486 |
+| load hits | 317204 | 317204 | 317199 | 317197 | 316465 |
+| load misses | 993 | 993 | 998 | 1000 | 1732 |
+| store hits | 195112 | 195112 | 195112 | 195105 | 195043 |
+| store misses | 2374 | 2374 | 2374 | 2381 | 2443 |
+| total cycles | 5902883 | 5902883 | 5944497 | 6107753 | 8129565 |
+
+<br/>
+
+## BEST CONFIGURATION
+With the research above, we conclude that the best cache configuration is a combination of write-allocate, write-back, lru, with a good balance of associativity (8 sets / 512 blocks).
