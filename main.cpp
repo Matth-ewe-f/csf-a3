@@ -24,6 +24,12 @@ bool lru;
 
 /* 
  * Check if a character string contains only numeric digit characters
+ * 
+ * Parameters:
+ *   str - the string to check
+ * 
+ * Returns:
+ *   true if and only if the given string contains only numeric digits
  */
 bool is_numeric(const char *str) {
     while (48 <= *str && *str <= 57) {
@@ -33,7 +39,13 @@ bool is_numeric(const char *str) {
 }
 
 /*
- * Checks if a number is a power of two
+ * Checks if an integer is a power of two
+ * 
+ * Paramters:
+ *   a - the integer to check
+ * 
+ * Returns:
+ *   true if and only if the given integer was a power of two
  */
 bool is_pow_of_two(int a) {
     int pows = 1;
@@ -46,6 +58,13 @@ bool is_pow_of_two(int a) {
 /*
  * Checks if the first three command line arguments are valid. If an argument
  * is invalid, prints an error message to cerr.
+ * 
+ * Parameters:
+ *   argv - pointer to an array containing pointers to the first three
+ *   command line arguments as strings
+ * 
+ * Returns:
+ *   true if and only iff the given arguments were valid
  */
 bool validate_numeric_args(char *argv[]) {
     // first arg - number of sets. Must be a number
@@ -88,9 +107,15 @@ bool validate_numeric_args(char *argv[]) {
 }
 
 /*
- * Checks if the last three command line arguments are valid. The first
- * pointer in argv should point to the fourth argument. If any arguments are
- * not valid, prints an error message to cerr.
+ * Checks if the last three command line arguments are valid. If any arguments
+ * are not valid, prints an error message to cerr.
+ * 
+ * Parameters:
+ *   argv - pointer to an array containing pointers to the last three command
+ *   line arguments as strings
+ * 
+ * Returns:
+ *   true if and only if the given arguments were valid
  */
 bool validate_textual_args(char *argv[]) {
     // fourth argument - write-allocate or no-write-allocate
