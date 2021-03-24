@@ -1,4 +1,4 @@
-// Matthew Flynn and Andrew Suh
+// Matthew Flynn (mflynn24) and Andrew Suh (wsuh1)
 // Cache object, used to simulate loading and storing of cache data
 // CSF Assignment #3
 

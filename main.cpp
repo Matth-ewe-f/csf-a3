@@ -1,4 +1,4 @@
-// Matthew Flynn and Andrew Suh
+// Matthew Flynn (mflynn24) and Andrew Suh (wsuh1)
 // Main function and command line argument validation for cache simulator
 // CSF Assignment #3
 
