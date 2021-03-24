@@ -1,4 +1,5 @@
 // Matthew Flynn and Andrew Suh
+// Main function and command line argument validation for Cache Simulator
 // CSF Assignment #3
 
 #ifndef CACHE_SIM

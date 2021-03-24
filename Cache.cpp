@@ -1,3 +1,7 @@
+// Matthew Flynn and Andrew Suh
+// Cache object, used to simulate loading/storing of cache data
+// CSF Assignment #3
+
 #include <iostream>
 #include <map>
 #include <vector>

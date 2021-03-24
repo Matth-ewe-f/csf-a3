@@ -1,3 +1,7 @@
+// Matthew Flynn and Andrew Suh
+// CacheBlock Object, simply tracks info about each cache block in a set
+// CSF Assignment #3
+
 #include "CacheBlock.h"
 
 /*

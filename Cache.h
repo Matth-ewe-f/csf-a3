@@ -1,3 +1,7 @@
+// Matthew Flynn and Andrew Suh
+// Cache object, used to simulate loading and storing of cache data
+// CSF Assignment #3
+
 #ifndef CACHE_H
 #define CACHE_H
 
