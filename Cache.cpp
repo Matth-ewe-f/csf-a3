@@ -12,6 +12,21 @@ using std::endl;
 using std::map;
 using std::vector;
 
+/*
+ * Creates a new Cache Object
+ * 
+ * Parameters:
+ *   numSets - the number of sets in the cache
+ *   numBlocksInSet - the number of blocks in each set
+ *   numBytesInBlock - the number of bytes in (size of) each block
+ *   writeAllocate - whether or not the cache is write allocate
+ *   writeThrough - whether or not the cache is write through
+ *   lru - whether or not the cache used the LRU strategy for evictions
+ * 
+ * Returns:
+ *   A new Cache object, with the specified configuration
+ * 
+ */ 
 Cache::Cache (unsigned numSets, unsigned numBlocksInSet, unsigned numBytesInBlock, bool writeAllocate, bool writeThrough, bool lru) {
     // initialize counters
     this->loads = 0;
@@ -52,6 +67,15 @@ Cache::~Cache() {
     delete sets;
 }
 
+/*
+ * Computes the log base two of a number, rounding down to the nearest integer
+ * 
+ * Parameters:
+ *   input - the number of which to take the log
+ * 
+ * Returns:
+ *   the log base two of the given integer, rounded down to the nearest integer
+ */ 
 int Cache::logBaseTwo(int input) {
     int index = 0;
     while (input > 1) {
@@ -61,18 +85,50 @@ int Cache::logBaseTwo(int input) {
     return index;
 }
 
+/*
+ * Computes the index of a memory address
+ * 
+ * Parameters:
+ *   fullAddress - the memory address
+ * 
+ * Returns:
+ *   the index of the given memory address, based on the configuration settings
+ *   of this cache object
+ * 
+ */ 
 int Cache::getAddressIndex(int fullAddress) {
     // bit shifting discards offset, mod discards tag
     return (fullAddress >> logBaseTwo(numBytesInBlock)) % numSets;
 }
 
+/*
+ * Computes the tag of a memory address
+ * 
+ * Parameters:
+ *   fullAddress - the memory address
+ * 
+ * Returns:
+ *   the tag of the given memory address, based on the configuration settings
+ *   of this cache object
+ * 
+ */ 
 int Cache::getAddressTag(int fullAddress) {
     // bit shifting discards offset, division discards index
     return (fullAddress >> logBaseTwo(numBytesInBlock)) / numSets;
 }
 
+/*
+ * Handles what should happen on a load hit. increases cycle count and updates
+ * lru counters
+ * 
+ * Parameters:
+ *   set - pointer to the vector of cache blocks (i.e. the cache set) in which
+ *   the hit occurred
+ *   counter - the value of the lru counter of the block that was hit before
+ *   the hit occurred
+ * 
+ */ 
 void Cache::loadHit(vector<CacheBlock* > * set, unsigned counter) {
-    // Assume LRU for MS2, so handle that case only
     if (lru) {
         for (vector<CacheBlock* >::iterator it = set->begin();
             it != set->end();
@@ -88,6 +144,18 @@ void Cache::loadHit(vector<CacheBlock* > * set, unsigned counter) {
     readFromCache();
 }
 
+/*
+ * Handles what should happen on a load miss, when there is already at least
+ * one block in the cache set that the new block needs to be put into. 
+ * increases cycle count, updates lru/fifo counters, and performs evictions if
+ * necessary
+ * 
+ * Parameters:
+ *   set - pointer to the vector of cache blocks (i.e. the cache set) in which
+ *   the new block should be loaded
+ *   tag - the tag of the memory address that was requested
+ * 
+ */ 
 void Cache::loadMissSetExists(vector<CacheBlock* > * set, int tag) {
     // increment all of the counters
     for (vector<CacheBlock* >::iterator it = set->begin();
@@ -119,6 +187,16 @@ void Cache::loadMissSetExists(vector<CacheBlock* > * set, int tag) {
     set->push_back(newBlock);
 }
 
+/*
+ * Handles what should happen on a load miss, when there are no blocks of the
+ * same index loaded into the cache already. Creates the set and increases the
+ * cycle count
+ * 
+ * Parameters:
+ *   index - the index of the requested block of memory
+ *   tag - the tag of the requested block of memory
+ * 
+ */ 
 void Cache::loadMissSetNotExists(int index, int tag) {
     // the set must be created
     vector<CacheBlock* > * set = new vector<CacheBlock *>;
@@ -129,6 +207,14 @@ void Cache::loadMissSetNotExists(int index, int tag) {
     sets->insert({index, set});
 }
 
+/*
+ * Determines if a load request resolves in a hit or miss, and then handles
+ * the request appropriately
+ * 
+ * Parameters:
+ *   address - the memory address that is being loaded
+ * 
+ */ 
 void Cache::performLoad(int address) {
     loads++;
     // get relevant pieces of address
@@ -159,6 +245,19 @@ void Cache::performLoad(int address) {
     }
 }
 
+/*
+ * Handles what should happen on a store miss, when there is already at least
+ * one block in the cache set that has the same index as the block being
+ * reqested. increases cycle count, and if necessitated by the cache 
+ * configuration, loads the block into the cache, updates fifo/lru counters,
+ * and performs evictions if necessary
+ * 
+ * Parameters:
+ *   set - pointer to the vector of cache blocks (i.e. the cache set) for
+ *   blocks of the index of the requested address
+ *   tag - the tag of the memory address that was requested
+ * 
+ */ 
 void Cache::storeMissSetExists(vector<CacheBlock *> * set, int tag) {
     // if no-write-allocate, just write to mem and that's it
     if (!writeAllocate) {
@@ -198,6 +297,17 @@ void Cache::storeMissSetExists(vector<CacheBlock *> * set, int tag) {
     }
 }
 
+/*
+ * Handles what should happen on a store miss, when there are no blocks of the
+ * same index loaded into the cache already. Increases the cycle count, and if
+ * necessitated by the cache settings, creates the set and loads the block into
+ * the cache.
+ * 
+ * Parameters:
+ *   index - the index of the requested block of memory
+ *   tag - the tag of the requested block of memory
+ * 
+ */ 
 void Cache::storeMissSetNotExists(int index, int tag) {
     // if no-write-allocate, simply write to mem and that's it
     if (!writeAllocate) {
@@ -217,8 +327,18 @@ void Cache::storeMissSetNotExists(int index, int tag) {
     sets->insert({index, set});
 }
 
+/*
+ * Handles what should happen on a store hit. increases cycle count and updates
+ * lru counters
+ * 
+ * Parameters:
+ *   set - pointer to the vector of cache blocks (i.e. the cache set) in which
+ *   the hit occurred
+ *   counter - the value of the lru counter of the block that was hit before
+ *   the hit occurred
+ * 
+ */ 
 void Cache::storeHit(vector<CacheBlock *> * set, unsigned counter) {
-    // only consider LRU case for MS2, so update counters for LRU case
     if (lru) {
         for (vector<CacheBlock *>::iterator it = set->begin();
             it != set->end();
@@ -239,6 +359,14 @@ void Cache::storeHit(vector<CacheBlock *> * set, unsigned counter) {
     }
 }
 
+/*
+ * Determines if a store request resolves in a hit or miss, and then handles
+ * the request appropriately
+ * 
+ * Parameters:
+ *   address - the memory address that is being written to
+ * 
+ */ 
 void Cache::performStore(int address) {
     stores++;
     // get relevant pieces of address
@@ -268,26 +396,45 @@ void Cache::performStore(int address) {
     }
 }
 
+/*
+ * Updates cycle counter when a value is read from the cache.
+ */ 
 void Cache::readFromCache() {
     cycles += 1;
 }
 
+/*
+ * Updates cycle counter when a value is read from memory.
+ */ 
 void Cache::readFromMem() {
     cycles += 100 * (numBytesInBlock / 4);
 }
 
+/*
+ * Updates cycle counter when a value is written to the cache.
+ */ 
 void Cache::writeToCache() {
     cycles += 1;
 }
 
+/*
+ * Updates cycle counter when a block is written to memory.
+ */ 
 void Cache::writeBlockToMem() {
     cycles += 100 * (numBytesInBlock / 4);
 }
 
+/*
+ * Updates cycle counter when four bytes (smallest unit) are written to memory
+ */ 
 void Cache::writeToMemFourBytes() {
     cycles += 100;
 }
 
+/*
+ * Prints the results of the cache simulation in the format required by the
+ * autograder.
+ */ 
 void Cache::printResults() {
     cout << "Total loads: " << loads
              << "\nTotal stores: " << stores
@@ -298,6 +445,9 @@ void Cache::printResults() {
              << "\nTotal cycles: " << cycles << endl;
 }
 
+/*
+ * Prints the results of the cache simulation are bare numbers without labels
+ */ 
 void Cache::printResultsNoText() {
     cout << loads 
         << "\n" << stores 
@@ -308,6 +458,9 @@ void Cache::printResultsNoText() {
         << "\n"  << cycles << endl;
 }
 
+/*
+ * Prints the configuration settings of the cache
+ */ 
 void Cache::printInitResults() {
     cout << "initialized cache with:" << endl;
     cout << "\t" << numSets << " sets\n"
